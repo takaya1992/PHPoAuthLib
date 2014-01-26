@@ -74,7 +74,7 @@ class Mixi extends AbstractService
     {
         $data = json_decode($responseBody);
 
-        if (null === $data || !is_array($data)) {
+        if (null === $data || !is_object($data)) {
             throw new TokenResponseException('Unable to parse response.');
         } elseif (isset($data->error)) {
             throw new TokenResponseException('Error in retrieving token: "' . $data->error . '"');
