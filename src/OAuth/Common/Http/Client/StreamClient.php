@@ -81,7 +81,8 @@ class StreamClient extends AbstractClient
                     'protocol_version' => '1.1',
                     'user_agent'       => $this->userAgent,
                     'max_redirects'    => $this->maxRedirects,
-                    'timeout'          => $this->timeout
+                    'timeout'          => $this->timeout,
+                    'ignore_errors'    => true,
                 ),
             )
         );
