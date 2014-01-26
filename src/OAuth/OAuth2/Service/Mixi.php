@@ -72,27 +72,27 @@ class Mixi extends AbstractService
      */
     protected function parseAccessTokenResponse($responseBody)
     {
-        parse_str($responseBody, $data);
+        $data = json_decode($responseBody);
 
         if (null === $data || !is_array($data)) {
             throw new TokenResponseException('Unable to parse response.');
-        } elseif (isset($data['error'])) {
-            throw new TokenResponseException('Error in retrieving token: "' . $data['error'] . '"');
+        } elseif (isset($data->error)) {
+            throw new TokenResponseException('Error in retrieving token: "' . $data->error . '"');
         }
 
         $token = new StdOAuth2Token();
-        $token->setAccessToken($data['access_token']);
-        $token->setLifeTime($data['expires']);
+        $token->setAccessToken($data->access_token);
+        $token->setLifeTime($data->expires_in);
 
-        if (isset($data['refresh_token'])) {
-            $token->setRefreshToken($data['refresh_token']);
-            unset($data['refresh_token']);
+        if (isset($data->refresh_token)) {
+            $token->setRefreshToken($data->refresh_token);
+            unset($data->refresh_token);
         }
 
-        unset($data['access_token']);
-        unset($data['expires']);
+        unset($data->access_token);
+        unset($data->expires_in);
 
-        $token->setExtraParams($data);
+        $token->setExtraParams(get_object_vars($data));
 
         return $token;
     }
