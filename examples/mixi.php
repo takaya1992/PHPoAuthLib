@@ -43,7 +43,7 @@ if (!empty($_GET['code'])) {
     $result = json_decode($mixiService->request('/people/@me/@self'), true);
 
     // Show some of the resultant data
-    echo 'Your unique mixi user id is: ' . $result['id'] . ' and your name is ' . $result['displayName'];
+    echo 'Your unique mixi user id is: ' . $result['entry']['id'] . ' and your name is ' . $result['entry']['displayName'];
 
 } elseif (!empty($_GET['go']) && $_GET['go'] === 'go') {
     $url = $mixiService->getAuthorizationUri();
