@@ -111,6 +111,10 @@ $servicesCredentials = array(
         'key'       => '',
         'secret'    => ''
     ),
+    'mixi' => array(
+        'key'       => '',
+        'secret'    => '',
+    ),
 );
 
 /** @var $serviceFactory \OAuth\ServiceFactory An OAuth service factory. */
