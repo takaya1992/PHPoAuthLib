@@ -26,16 +26,37 @@ class Mixi extends AbstractService
      *
      * @link http://developer.mixi.co.jp/connect/mixi_graph_api/api_auth/#toc-authorization-code
      */
-    const SCOPE_READ_PROFILE  = 'r_profile';
-    const SCOPE_READ_UPDATES  = 'r_updates';
-    const SCOPE_READ_VOICE    = 'r_voice';
-    const SCOPE_WRITE_VOICE   = 'w_voice';
-    const SCPOE_WRITE_SHARE   = 'w_share';
-    const SCOPE_READ_PHOTO    = 'r_photo';
-    const SCOPE_WRITE_PHOTO   = 'w_photo';
-    const SCOPE_READ_MESSAGE  = 'r_message';
-    const SCOPE_WRITE_MESSAGE = 'w_message';
-    const SCOPE_WRITE_DIARY   = 'w_diary';
+    const SCOPE_READ_PROFILE                 = 'r_profile';
+    const SCOPE_READ_PROFILE_NAME            = 'r_profile_name';
+    const SCOPE_READ_PROFILE_GENDER          = 'r_profile_gender';
+    const SCOPE_READ_PROFILE_BIRTHDAY        = 'r_profile_birthday';
+    const SCOPE_READ_PROFILE_BLOOD_TYPE      = 'r_profile_blood_type';
+    const SCOPE_READ_PROFILE_LOCATION        = 'r_profile_location';
+    const SCOPE_READ_PROFILE_HOMETOWN        = 'r_profile_hometown';
+    const SCOPE_READ_PROFILE_ABOUT_ME        = 'r_profile_about_me';
+    const SCOPE_READ_PROFILE_OCCUPATION      = 'r_profile_occupation';
+    const SCOPE_READ_PROFILE_INTERESTS       = 'r_profile_interests';
+    const SCOPE_READ_PROFILE_FAVORITE_THINGS = 'r_profile_favorite_things';
+    const SCOPE_READ_PROFILE_ORGANIZATIONS   = 'r_profile_organizations';
+    const SCOPE_WRITE_PROFILE                = 'w_profile';
+    const SCOPE_READ_UPDATES                 = 'r_updates';
+    const SCOPE_READ_VOICE                   = 'r_voice';
+    const SCOPE_WRITE_VOICE                  = 'w_voice';
+    const SCOPE_READ_SHARE                   = 'r_share';
+    const SCPOE_WRITE_SHARE                  = 'w_share';
+    const SCOPE_READ_PHOTO                   = 'r_photo';
+    const SCOPE_WRITE_PHOTO                  = 'w_photo';
+    const SCOPE_READ_MESSAGE                 = 'r_message';
+    const SCOPE_WRITE_MESSAGE                = 'w_message';
+    const SCOPE_READ_DIARY                   = 'r_diary';
+    const SCOPE_WRITE_DIARY                  = 'w_diary';
+    const SCOPE_READ_CHECKIN                 = 'r_checkin';
+    const SCOPE_WRITE_CHECKIN                = 'w_checkin';
+    const SCOPE_READ_CLAENDER                = 'r_calender';
+    const SCOPE_WRITE_CALENDER               = 'w_calender';
+    const SCOPE_READ_PAGE                    = 'r_page';
+    const SCOPE_READ_PAGEFOLLOW              = 'r_pagefollow';
+    const SCOPE_WRITE_PAGEFEED               = 'w_pagefeed';
 
     public function __construct(
         CredentialsInterface $credentials,
