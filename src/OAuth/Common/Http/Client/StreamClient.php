@@ -4,6 +4,8 @@ namespace OAuth\Common\Http\Client;
 
 use OAuth\Common\Http\Exception\TokenResponseException;
 use OAuth\Common\Http\Uri\UriInterface;
+use OAuth\Common\Http\Uri\UriFactory;
+use OAuth\Common\Http\Uri;
 
 /**
  * Client implementation for streams/file_get_contents
@@ -57,34 +59,85 @@ class StreamClient extends AbstractClient
         }
         $extraHeaders['Content-length'] = 'Content-length: '.strlen($requestBody);
 
-        $context = $this->generateStreamContext($requestBody, $extraHeaders, $method);
-
-        $response = file_get_contents($endpoint->getAbsoluteUri(), false, $context);
-        preg_match('/HTTP\/1\.[0|1|x] ([0-9]{3})/', $http_response_header[0], $matches);
-        $statusCode = (int)$matches[1];
-        $isSuccess = $statusCode >= 200 && $statusCode < 300 || $statusCode === 304;
-        if (!$isSuccess) {
-            throw new TokenResponseException($response);
-        }
-
+        $response = $this->getResponse(
+            $endpoint->getAbsoluteUri(),
+            $requestBody,
+            $extraHeaders,
+            $method
+        );
         return $response;
     }
 
-    private function generateStreamContext($body, $headers, $method)
-    {
-        return stream_context_create(
-            array(
-                'http' => array(
-                    'method'           => $method,
-                    'header'           => implode("\r\n", array_values($headers)),
-                    'content'          => $body,
-                    'protocol_version' => '1.1',
-                    'user_agent'       => $this->userAgent,
-                    'max_redirects'    => $this->maxRedirects,
-                    'timeout'          => $this->timeout,
-                    'ignore_errors'    => true,
-                ),
-            )
+    private function generateStreamContext(
+        UriInterface $uri,
+        $body,
+        $headers,
+        $method
+    ) {
+        $opts = array(
+            'http' => array(
+                'method'           => $method,
+                'header'           => implode("\r\n", array_values($headers)),
+                'content'          => $body,
+                'protocol_version' => '1.1',
+                'user_agent'       => $this->userAgent,
+                'max_redirects'    => $this->maxRedirects,
+                'timeout'          => $this->timeout,
+                'ignore_errors'    => true,
+            ),
         );
+
+        $uriFactory = new UriFactory();
+        $proxyUri = $uriFactory->createProxyUriFromEnv($_ENV, $uri->getScheme());
+        if (null === $proxyUri) {
+            return stream_context_create($opts);
+        }
+
+        if (!empty($proxyUri->getRawUserInfo)) {
+            $proxyAuth = base64_encode($proxyUri->getRawUserInfo);
+            $opts['http']['header'] .= "\r\n". 'Proxy-Authorization: Basic '. $proxyAuth;
+        }
+
+        if ('http' === $proxyUri->getScheme()) {
+            $proxyUri->setScheme('tcp');
+        }
+        if ('https' === $proxyUri->getScheme()) {
+            $proxyUri->setScheme('ssl');
+        }
+
+        $proxyUri->setUserInfo('');
+
+        $opts['http']['proxy'] = $proxyUri->getAbsoluteUri();
+        $opts['http']['request_fulluri'] = true;
+
+        return stream_context_create($opts);
     }
+
+    private function getResponse(
+        UriInterface $uri,
+        $body,
+        $headers,
+        $method
+    ) {
+        $context = $this->generateStreamContext($uri, $body, $headers, $method);
+        $response = file_get_contents($endpoint->getAbsoluteUri(), false, $context);
+        $statusCode = $this->getStatusCode($http_response_header);
+        if (!$this->isSuccess($statusCode)) {
+            throw new TokenResponseException($response);
+        }
+        return $response;
+    }
+
+    private function getStatusCode($responseHeaders)
+    {
+        preg_match('/HTTP\/1\.[0|1|x] ([0-9]{3})/', $responseHeaders[0], $matches);
+        return (int)$matches[1];
+    }
+
+    private function isSuccess($statusCode)
+    {
+        return $statusCode >= 200 && $statusCode < 300 || $statusCode === 304;
+    }
+
+
 }

@@ -69,6 +69,32 @@ class UriFactory implements UriFactoryInterface
     }
 
     /**
+     * Factory method to build a Proxy URI From environment-variable $_ENV array
+     *
+     * @param array $_env
+     * @param string $scheme
+     *
+     * @return UriInterface
+     */
+    public function createProxyUriFromEnv($_env, $scheme = 'http')
+    {
+        if (empty($_env['http_proxy']) && empty($_env['https_proxy'])) {
+            return null;
+        }
+        if ('http' !== $scheme || 'https' !== $scheme) {
+            return null;
+        }
+
+        if ('http' === $scheme) {
+            $proxyUri = $_env['http_proxy'];
+        } else {
+            $proxyUri = (empty($_env['https_proxy'])) ? $_env['http_proxy'] : $_env['https_proxy'];
+        }
+
+        return new Uri($proxyUri);
+    }
+
+    /**
      * @param array $_server
      *
      * @return UriInterface|null
