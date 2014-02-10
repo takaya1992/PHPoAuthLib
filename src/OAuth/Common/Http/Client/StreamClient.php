@@ -60,7 +60,7 @@ class StreamClient extends AbstractClient
         $extraHeaders['Content-length'] = 'Content-length: '.strlen($requestBody);
 
         $response = $this->getResponse(
-            $endpoint->getAbsoluteUri(),
+            $endpoint,
             $requestBody,
             $extraHeaders,
             $method
@@ -120,7 +120,7 @@ class StreamClient extends AbstractClient
         $method
     ) {
         $context = $this->generateStreamContext($uri, $body, $headers, $method);
-        $response = file_get_contents($endpoint->getAbsoluteUri(), false, $context);
+        $response = file_get_contents($uri->getAbsoluteUri(), false, $context);
         $statusCode = $this->getStatusCode($http_response_header);
         if (!$this->isSuccess($statusCode)) {
             throw new TokenResponseException($response);
